@@ -33,7 +33,7 @@ variable "tag" {
 
 variable "disk_size" {
   type = number
-  default = 100
+  default = 120
 }
 
 variable "disk_free_mb" {
@@ -125,6 +125,20 @@ build {
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
+      "brew install libimobiledevice ideviceinstaller ios-deploy carthage",
+      "brew install xcbeautify swiftformat",
+      "rbenv global 3.3.8", # fastlane conflicts with 3.4.0+ https://github.com/fastlane/fastlane/issues/29527
+      "gem update",
+      "gem install fastlane",
+      "gem install cocoapods",
+      "gem install xcpretty",
+      "gem uninstall --ignore-dependencies ffi && gem install ffi -- --enable-libffi-alloc"
+    ]
+  }
+
+  provisioner "shell" {
+    inline = [
+      "source ~/.zprofile",
       "brew install xcodesorg/made/xcodes",
       "xcodes version",
     ]
@@ -197,17 +211,6 @@ build {
       "flutter doctor --android-licenses",
       "flutter doctor",
       "flutter precache",
-    ]
-  }
-  provisioner "shell" {
-    inline = [
-      "source ~/.zprofile",
-      "brew install libimobiledevice ideviceinstaller ios-deploy fastlane carthage",
-      "brew install xcbeautify",
-      "gem update",
-      "gem install cocoapods",
-      "gem install xcpretty",
-      "gem uninstall --ignore-dependencies ffi && gem install ffi -- --enable-libffi-alloc"
     ]
   }
 

@@ -16,6 +16,10 @@
     "group": "Software Detail",
     "detail": [
       {
+        "name": "Xcode Versions",
+        "script": "xcodes installed --no-color || echo \"Xcode not installed\""
+      },
+      {
         "name": "Python Version",
         "script": "python3 --version"
       },
@@ -26,6 +30,10 @@
       {
         "name": "Ruby Version",
         "script": "ruby --version"
+      },
+      {
+        "name": "Bundler Version",
+        "script": "bundler --version"
       },
       {
         "name": "CocoaPods Version",

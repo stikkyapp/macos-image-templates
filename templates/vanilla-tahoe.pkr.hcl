@@ -12,8 +12,8 @@ packer {
 }
 
 source "tart-cli" "tart" {
-  from_ipsw    = "https://updates.cdn-apple.com/2025SpringFCS/fullrestores/082-44534/CE6C1054-99A3-4F67-A823-3EE9E6510CDE/UniversalMac_15.5_24F74_Restore.ipsw"
-  vm_name      = "sequoia-vanilla"
+  from_ipsw    = "https://updates.cdn-apple.com/2025SummerSeed/fullrestores/082-58035/4434D4B0-E61D-483F-87A0-4643F9D4750D/UniversalMac_26.0_25A5295e_Restore.ipsw"
+  vm_name      = "tahoe-vanilla"
   cpu_count    = 4
   memory_gb    = 8
   disk_size_gb = 50
@@ -32,7 +32,7 @@ source "tart-cli" "tart" {
     # [1]: should be named "English (US)", but oh well 🤷
     "<wait30s>italiano<esc>english<enter>",
     # Select Your Country or Region
-    "<wait30s>united states<leftShiftOn><tab><leftShiftOff><spacebar>",
+    "<wait60s>united states<leftShiftOn><tab><leftShiftOff><spacebar>",
     # Transfer Your Data to This Mac
     "<wait10s><tab><tab><tab><spacebar><tab><tab><spacebar>",
     # Written and Spoken Languages
@@ -42,7 +42,7 @@ source "tart-cli" "tart" {
     # Data & Privacy
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Create a Mac Account
-    "<wait10s>Managed via Tart<tab>admin<tab>admin<tab>admin<tab><tab><spacebar><tab><tab><spacebar>",
+    "<wait10s><tab><tab><tab><tab><tab><tab>Managed via Tart<tab>admin<tab>admin<tab>admin<tab><tab><spacebar><tab><tab><spacebar>",
     # Enable Voice Over
     "<wait120s><leftAltOn><f5><leftAltOff>",
     # Sign In with Your Apple ID
@@ -62,15 +62,15 @@ source "tart-cli" "tart" {
     # Analytics
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Screen Time
-    "<wait10s><tab><spacebar>",
+    "<wait10s><tab><tab><spacebar>",
     # Siri
     "<wait10s><tab><spacebar><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Choose Your Look
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Update Mac Automatically
-    "<wait10s><tab><spacebar>",
+    "<wait10s><tab><tab><spacebar>",
     # Welcome to Mac
-    "<wait10s><spacebar>",
+    "<wait30s><spacebar>",
     # Disable Voice Over
     "<leftAltOn><f5><leftAltOff>",
     # Enable Keyboard navigation
@@ -83,7 +83,7 @@ source "tart-cli" "tart" {
     # Navigate to "Sharing"
     "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Sharing<enter>",
     # Navigate to "Screen Sharing" and enable it
-    "<wait10s><tab><tab><tab><tab><tab><tab><tab><spacebar>",
+    "<wait10s><tab><tab><tab><tab><tab><spacebar>",
     # Navigate to "Remote Login" and enable it
     "<wait10s><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><tab><spacebar>",
     # Quit System Settings
@@ -96,7 +96,7 @@ source "tart-cli" "tart" {
     # Disable Gatekeeper (2/2)
     "<wait10s><leftAltOn><spacebar><leftAltOff>System Settings<enter>",
     "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Privacy & Security<enter>",
-    "<wait10s><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff><leftShiftOn><tab><leftShiftOff>",
+    "<wait10s><leftShiftOn><tab><tab><tab><tab><tab><leftShiftOff>",
     "<wait10s><down><wait1s><down><wait1s><enter>",
     "<wait10s>admin<enter>",
     "<wait10s><leftShiftOn><tab><leftShiftOff><wait1s><spacebar>",
@@ -157,7 +157,7 @@ build {
     inline = [
       # Install command-line tools
       "touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress",
-      "softwareupdate --list | sed -n 's/.*Label: \\(Command Line Tools for Xcode-.*\\)/\\1/p' | xargs -I {} softwareupdate --install '{}'",
+      "softwareupdate --list | sed -n 's/.*Label: \\(Command Line Tools .*\\)/\\1/p' | tr '\\n' '\\0' | xargs -0 -I {} softwareupdate --install '{}'",
       "rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress",
     ]
   }
