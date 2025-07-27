@@ -74,6 +74,7 @@ locals {
         "sudo xcode-select -s /Applications/Xcode_${version}.app",
         "xcodebuild -downloadPlatform iOS",
         "xcodebuild -runFirstLaunch",
+        "df -h",
       ]
     }
   ]
@@ -149,6 +150,13 @@ build {
     destination = "/Users/admin/Downloads/"
   }
 
+  provisioner "shell" {
+    inline = [
+      "source ~/.zprofile",
+      "df -h",
+    ]
+  }
+
   // iterate over all Xcode versions and install them
   // select the latest one as the default
   dynamic "provisioner" {
@@ -159,10 +167,35 @@ build {
     }
   }
 
+  dynamic "provisioner" {
+    for_each = length(var.xcode_version) > 2 ? [2] : []
+    labels = ["shell"]
+    content {
+      inline = [
+        "source ~/.zprofile",
+        "sudo xcodes select '${var.xcode_version[2]}'",
+        "xcodebuild -downloadAllPlatforms",
+      ]
+    }
+  }
+
+  dynamic "provisioner" {
+    for_each = length(var.xcode_version) > 1 ? [1] : []
+    labels = ["shell"]
+    content {
+      inline = [
+        "source ~/.zprofile",
+        "sudo xcodes select '${var.xcode_version[1]}'",
+        "xcodebuild -downloadAllPlatforms",
+      ]
+    }
+  }
+
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
       "sudo xcodes select '${var.xcode_version[0]}'",
+      "xcodebuild -downloadAllPlatforms",
     ]
   }
 
