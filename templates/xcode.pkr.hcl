@@ -174,7 +174,7 @@ build {
       inline = [
         "source ~/.zprofile",
         "sudo xcodes select '${var.xcode_version[2]}'",
-        "xcodebuild -downloadAllPlatforms",
+        "xcodebuild -downloadPlatform iOS",
       ]
     }
   }
@@ -186,7 +186,7 @@ build {
       inline = [
         "source ~/.zprofile",
         "sudo xcodes select '${var.xcode_version[1]}'",
-        "xcodebuild -downloadAllPlatforms",
+        "xcodebuild -downloadPlatform iOS",
       ]
     }
   }
@@ -195,7 +195,7 @@ build {
     inline = [
       "source ~/.zprofile",
       "sudo xcodes select '${var.xcode_version[0]}'",
-      "xcodebuild -downloadAllPlatforms",
+      "xcodebuild -downloadPlatform iOS",
     ]
   }
 
