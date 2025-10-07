@@ -12,7 +12,7 @@ packer {
 }
 
 source "tart-cli" "tart" {
-  from_ipsw    = "https://updates.cdn-apple.com/2025SummerSeed/fullrestores/082-72248/F32F08F8-FC66-4D24-847B-F03C6CF7C410/UniversalMac_26.0_25A5306g_Restore.ipsw"
+  from_ipsw    = "https://updates.cdn-apple.com/2025FallFCS/fullrestores/093-37622/CE01FAB2-7F26-48EE-AEE4-5E57A7F6D8BB/UniversalMac_26.0_25A354_Restore.ipsw"
   vm_name      = "tahoe-vanilla"
   cpu_count    = 4
   memory_gb    = 8
@@ -58,13 +58,17 @@ source "tart-cli" "tart" {
     # Are you sure you don't want to use Location Services?
     "<wait10s><tab><spacebar>",
     # Select Your Time Zone
-    "<wait10s><tab><tab>UTC<enter><leftShiftOn><tab><tab><leftShiftOff><spacebar>",
+    "<wait10s><tab><tab><tab>UTC<enter><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Analytics
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Screen Time
     "<wait10s><tab><tab><spacebar>",
     # Siri
     "<wait10s><tab><spacebar><leftShiftOn><tab><leftShiftOff><spacebar>",
+    # You Mac is Ready for FileVault
+    "<wait10s><leftShiftOn><tab><tab><leftShiftOff><spacebar>",
+    # Mac Data Will Not Be Securely Encrypted
+    "<wait10s><tab><spacebar>",
     # Choose Your Look
     "<wait10s><leftShiftOn><tab><leftShiftOff><spacebar>",
     # Update Mac Automatically
@@ -72,14 +76,14 @@ source "tart-cli" "tart" {
     # Welcome to Mac
     "<wait30s><spacebar>",
     # Disable Voice Over
-    "<leftAltOn><f5><leftAltOff>",
+    "<wait10s><leftAltOn><f5><leftAltOff>",
     # Enable Keyboard navigation
     # This is so that we can navigate the System Settings app using the keyboard
-    "<wait10s><leftAltOn><spacebar><leftAltOff>Terminal<enter>",
-    "<wait10s>defaults write NSGlobalDomain AppleKeyboardUIMode -int 3<enter>",
-    "<wait10s><leftAltOn>q<leftAltOff>",
+    "<wait10s><leftAltOn><spacebar><leftAltOff>Terminal<wait10s><enter>",
+    "<wait10s><wait10s>defaults write NSGlobalDomain AppleKeyboardUIMode -int 3<enter>",
     # Now that the installation is done, open "System Settings"
-    "<wait10s><leftAltOn><spacebar><leftAltOff>System Settings<enter>",
+    # On Tahoe opening System Settings through Spotlight is not very reliable, sometimes opens System information
+    "<wait10s>open '/System/Applications/System Settings.app'<enter>",
     # Navigate to "Sharing"
     "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Sharing<enter>",
     # Navigate to "Screen Sharing" and enable it
@@ -89,12 +93,11 @@ source "tart-cli" "tart" {
     # Quit System Settings
     "<wait10s><leftAltOn>q<leftAltOff>",
     # Disable Gatekeeper (1/2)
-    "<wait10s><leftAltOn><spacebar><leftAltOff>Terminal<enter>",
     "<wait10s>sudo spctl --global-disable<enter>",
     "<wait10s>admin<enter>",
-    "<wait10s><leftAltOn>q<leftAltOff>",
     # Disable Gatekeeper (2/2)
-    "<wait10s><leftAltOn><spacebar><leftAltOff>System Settings<enter>",
+    # On Tahoe opening System Settings through Spotlight is not very reliable, sometimes opens System information
+    "<wait10s>open '/System/Applications/System Settings.app'<enter>",
     "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Privacy & Security<enter>",
     "<wait10s><leftShiftOn><tab><tab><tab><tab><tab><leftShiftOff>",
     "<wait10s><down><wait1s><down><wait1s><enter>",
@@ -151,26 +154,5 @@ build {
       # Ensure that Gatekeeper is disabled
       "spctl --status | grep -q 'assessments disabled'"
     ]
-  }
-
-  provisioner "shell" {
-    inline = [
-      # Install command-line tools
-      "touch /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress",
-      "softwareupdate --list | sed -n 's/.*Label: \\(Command Line Tools .*\\)/\\1/p' | tr '\\n' '\\0' | xargs -0 -I {} softwareupdate --install '{}'",
-      "rm /tmp/.com.apple.dt.CommandLineTools.installondemand.in-progress",
-    ]
-  }
-
-  provisioner "ansible" {
-    playbook_file = "ansible/playbook-system-updater.yml"
-    extra_arguments = [
-      "-vvv",
-    ]
-    ansible_env_vars = [
-      "ANSIBLE_TRANSPORT=paramiko",
-      "ANSIBLE_HOST_KEY_CHECKING=False",
-    ]
-    use_proxy = false
   }
 }
