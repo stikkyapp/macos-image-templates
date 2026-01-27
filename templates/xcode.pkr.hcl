@@ -20,6 +20,11 @@ variable "additional_ios_builds" {
   default = []
 }
 
+variable "additional_tvos_builds" {
+  type = list(string)
+  default = []
+}
+
 variable "xcode_components" {
   type    = list(string)
   default = []
@@ -95,6 +100,9 @@ build {
       "brew --version",
       "brew update",
       "brew upgrade",
+      "brew install codex",
+      "brew install --cask claude-code",
+      "brew install --cask amazon-q"
     ]
   }
 
@@ -132,7 +140,7 @@ build {
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
-      "brew install xcodesorg/made/xcodes",
+      "brew install xcodes",
       "xcodes version",
     ]
   }
@@ -204,6 +212,15 @@ build {
     inline = concat(
       ["source ~/.zprofile"],
       [
+        for runtime in var.additional_tvos_builds : "xcodebuild -downloadPlatform tvOS -buildVersion ${runtime}"
+      ]
+    )
+  }
+
+  provisioner "shell" {
+    inline = concat(
+      ["source ~/.zprofile"],
+      [
         for component in var.xcode_components : "xcodebuild -downloadComponent ${component}"
       ]
     )
@@ -214,8 +231,11 @@ build {
       "source ~/.zprofile",
       "brew install libimobiledevice ideviceinstaller ios-deploy carthage",
       "brew install xcbeautify swiftformat swiftlint swiftgen licenseplist",
-      "brew install mint tuist/tuist/tuist",
-      "rbenv global 3.3.9", # fastlane conflicts with 3.4.0+ https://github.com/fastlane/fastlane/issues/29527
+      "brew install mint",
+      "brew tap tuist/tuist",
+      "brew install --formula tuist",
+      "rbenv install 3.3.10",
+      "rbenv global 3.3.10", # fastlane conflicts with 3.4.0+ https://github.com/fastlane/fastlane/issues/29527
       "gem update",
       "gem install fastlane",
       "gem install cocoapods",
@@ -322,6 +342,19 @@ build {
     ]
   }
 
+  # Wait for the "update_dyld_sim_shared_cache" process[1][2] to finish
+  # to avoid wasting CPU cycles after boot
+  #
+  # [1]: https://apple.stackexchange.com/questions/412101/update-dyld-sim-shared-cache-is-taking-up-a-lot-of-memory
+  # [2]: https://stackoverflow.com/a/68394101/9316533
+  provisioner "shell" {
+    inline = [
+      "source ~/.zprofile",
+      "xcrun simctl runtime dyld_shared_cache update --all || sleep 180",
+      "xcrun simctl list -v"
+    ]
+  }
+
   # Compatibility with GitHub Actions Runner Images, where
   # /usr/local/bin belongs to the default user. Also see [2].
   #
@@ -330,17 +363,6 @@ build {
   provisioner "shell" {
     inline = [
       "sudo chown admin /usr/local/bin"
-    ]
-  }
-
-  # Wait for the "update_dyld_sim_shared_cache" process[1][2] to finish
-  # to avoid wasting CPU cycles after boot
-  #
-  # [1]: https://apple.stackexchange.com/questions/412101/update-dyld-sim-shared-cache-is-taking-up-a-lot-of-memory
-  # [2]: https://stackoverflow.com/a/68394101/9316533
-  provisioner "shell" {
-    inline = [
-      "sleep 1800"
     ]
   }
 

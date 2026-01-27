@@ -1,7 +1,7 @@
 packer {
   required_plugins {
     tart = {
-      version = ">= 1.12.0"
+      version = ">= 1.16.0"
       source  = "github.com/cirruslabs/tart"
     }
     ansible = {
@@ -12,7 +12,7 @@ packer {
 }
 
 source "tart-cli" "tart" {
-  from_ipsw    = "https://updates.cdn-apple.com/2025FallFCS/fullrestores/093-37622/CE01FAB2-7F26-48EE-AEE4-5E57A7F6D8BB/UniversalMac_26.0_25A354_Restore.ipsw"
+  from_ipsw    = "https://updates.cdn-apple.com/2025FallFCS/fullrestores/093-37399/E144C918-CF99-4BBC-B1D0-3E739B9A3F2D/UniversalMac_26.2_25C56_Restore.ipsw"
   vm_name      = "tahoe-vanilla"
   cpu_count    = 4
   memory_gb    = 8
@@ -32,7 +32,7 @@ source "tart-cli" "tart" {
     # [1]: should be named "English (US)", but oh well 🤷
     "<wait30s>italiano<esc>english<enter>",
     # Select Your Country or Region
-    "<wait60s>united states<leftShiftOn><tab><leftShiftOff><spacebar>",
+    "<wait30s><click 'Select Your Country or Region'><wait5s>united states<leftShiftOn><tab><leftShiftOff><spacebar>",
     # Transfer Your Data to This Mac
     "<wait10s><tab><tab><tab><spacebar><tab><tab><spacebar>",
     # Written and Spoken Languages
@@ -99,7 +99,7 @@ source "tart-cli" "tart" {
     # On Tahoe opening System Settings through Spotlight is not very reliable, sometimes opens System information
     "<wait10s>open '/System/Applications/System Settings.app'<enter>",
     "<wait10s><leftCtrlOn><f2><leftCtrlOff><right><right><right><down>Privacy & Security<enter>",
-    "<wait10s><leftShiftOn><tab><tab><tab><tab><tab><leftShiftOff>",
+    "<wait10s><leftShiftOn><tab><tab><tab><tab><tab><tab><leftShiftOff>",
     "<wait10s><down><wait1s><down><wait1s><enter>",
     "<wait10s>admin<enter>",
     "<wait10s><leftShiftOn><tab><leftShiftOff><wait1s><spacebar>",

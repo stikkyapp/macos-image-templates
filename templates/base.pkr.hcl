@@ -65,6 +65,7 @@ build {
       "brew --version",
       "brew update",
       "brew install wget unzip zip ca-certificates cmake gcc git-lfs jq yq gh gitlab-runner",
+      "brew install equinix-labs/otel-cli/otel-cli",
       "brew install curl || true", // doesn't work on Monterey
       "brew install --cask git-credential-manager",
       "git lfs install",
@@ -116,8 +117,8 @@ build {
   provisioner "shell" {
     inline = [
       "source ~/.zprofile",
-      "brew install node@20",
-      "echo 'export PATH=\"/opt/homebrew/opt/node@20/bin:$PATH\"' >> ~/.zprofile",
+      "brew install node@24",
+      "echo 'export PATH=\"/opt/homebrew/opt/node@24/bin:$PATH\"' >> ~/.zprofile",
       "source ~/.zprofile",
       "node --version",
       "npm install --global yarn",
