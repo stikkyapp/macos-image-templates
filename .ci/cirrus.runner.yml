@@ -2,20 +2,17 @@ task:
   name: "Update Runner Image ($MACOS_VERSION)"
   env:
     matrix:
-      - MACOS_VERSION: sonoma
-        XCODE_VERSIONS: "16.1,16"
-        DISK_SIZE: 230
       - MACOS_VERSION: sequoia
         XCODE_VERSIONS: "\"26.0.1\",16.4,16.3,16.2,16.1,16"
         ADDITIONAL_IOS_BUILDS: "18.5,18.4,18.2,17.5"
         ADDITIONAL_TVOS_BUILDS: "17.5"
         XCODE_COMPONENTS: "\"MetalToolchain\""
-        DISK_SIZE: 400
+        DISK_SIZE: 380
       - MACOS_VERSION: tahoe
-        XCODE_VERSIONS: "\"26.2\",\"26.1.1\",\"26.0.1\""
+        XCODE_VERSIONS: "\"26.4\",\"26.5-beta\",\"26.3\",\"26.2\",\"26.1.1\",\"26.0.1\""
         XCODE_COMPONENTS: "\"MetalToolchain\""
         ADDITIONAL_IOS_BUILDS: "18.6"
-        DISK_SIZE: 300
+        DISK_SIZE: 330
   <<: *defaults
   pull_base_script:
     - tart pull ghcr.io/cirruslabs/macos-$MACOS_VERSION-base:latest

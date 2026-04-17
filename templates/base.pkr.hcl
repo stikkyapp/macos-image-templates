@@ -7,13 +7,12 @@ packer {
   }
 }
 
-variable "macos_version" {
+variable "vm_name" {
   type = string
 }
 
 source "tart-cli" "tart" {
-  vm_base_name = "ghcr.io/cirruslabs/macos-${var.macos_version}-vanilla:latest"
-  vm_name      = "${var.macos_version}-base"
+  vm_name      = "${var.vm_name}"
   cpu_count    = 4
   memory_gb    = 8
   disk_size_gb = 50
@@ -65,6 +64,7 @@ build {
       "brew --version",
       "brew update",
       "brew install wget unzip zip ca-certificates cmake gcc git-lfs jq yq gh gitlab-runner",
+      "brew install buildkite/buildkite/buildkite-agent",
       "brew install equinix-labs/otel-cli/otel-cli",
       "brew install curl || true", // doesn't work on Monterey
       "brew install --cask git-credential-manager",
@@ -176,5 +176,10 @@ build {
       "sudo chown root:wheel /Library/LaunchAgents/org.cirruslabs.tart-guest-agent.plist",
       "sudo chmod 0644 /Library/LaunchAgents/org.cirruslabs.tart-guest-agent.plist",
     ]
+  }
+
+  # Update TCC.db and allow automation tools
+  provisioner "shell" {
+    script = "scripts/update-tcc-database.sh"
   }
 }
